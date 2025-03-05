@@ -9,6 +9,7 @@ import { Footer } from '@/Footer/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { Toaster } from '@/components/ui/sonner'
 
 import '../globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -24,6 +25,7 @@ export default async function AuthRootLayout({ children }: { children: React.Rea
       <body>
         <Providers>
           {children}
+          <Toaster position="top-right" expand={true} richColors closeButton  />
           <Footer />
         </Providers>
       </body>
