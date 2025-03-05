@@ -37,12 +37,9 @@ const createUserDtoSchema = z.object({
   }),
 })
 
-type CreateUserDto = z.infer<typeof createUserDtoSchema>;
+type CreateUserDto = z.infer<typeof createUserDtoSchema>
 
-export function SignupForm({
-  className,
-  ...props
-}: React.ComponentPropsWithoutRef<'div'>) {
+export function SignupForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const form = useForm<CreateUserDto>({
     resolver: zodResolver(createUserDtoSchema),
     defaultValues: {
@@ -60,7 +57,7 @@ export function SignupForm({
       const { email, name, password } = values
 
       const response = await fetch('/api/users', {
-        method: 'POST', 
+        method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -82,40 +79,34 @@ export function SignupForm({
       form.setError('root', {
         type: 'manual',
         message: error.message,
-      });
+      })
     },
   })
 
-  const onSubmit = useCallback(
-    async (values: CreateUserDto) => {
-      const { password, confirmPassword } = values
-  
-      if (password !== confirmPassword) {
-        form.setError('password', {
-          message: 'Passwords do not match',
-        })
-        return
-      }
+  const onSubmit = useCallback(async (values: CreateUserDto) => {
+    const { password, confirmPassword } = values
 
-      toast.promise(createUserMutation.mutateAsync(values), {
-        loading: 'Creating your account...',
-        success: 'Account created successfully',
-        error: (error) => error.message,
+    if (password !== confirmPassword) {
+      form.setError('password', {
+        message: 'Passwords do not match',
       })
-    },
-    []
-  )
+      return
+    }
+
+    toast.promise(createUserMutation.mutateAsync(values), {
+      loading: 'Creating your account...',
+      success: 'Account created successfully',
+      error: (error) => error.message,
+    })
+  }, [])
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-col gap-3">
             <div className="flex flex-col items-center gap-2">
-              <Link
-                href="/"
-                className="flex flex-col items-center gap-2 font-medium"
-              >
+              <Link href="/" className="flex flex-col items-center gap-2 font-medium">
                 <div className="flex h-8 w-8 items-center justify-center rounded-md">
                   <GalleryVerticalEnd className="size-6" />
                 </div>
@@ -134,11 +125,9 @@ export function SignupForm({
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input {...field} autoComplete="email"  placeholder="john.doe@example.com" />
+                      <Input {...field} autoComplete="email" placeholder="john.doe@example.com" />
                     </FormControl>
-                    <FormDescription>
-                      We need your email to send you a confirmation
-                    </FormDescription>
+                    <FormDescription>We need your email to send you a confirmation</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -150,11 +139,9 @@ export function SignupForm({
                   <FormItem>
                     <FormLabel>Name</FormLabel>
                     <FormControl>
-                      <Input {...field} autoComplete="name"  placeholder="John Doe" />
+                      <Input {...field} autoComplete="name" placeholder="John Doe" />
                     </FormControl>
-                    <FormDescription>
-                      This is your public display name
-                    </FormDescription>
+                    <FormDescription>This is your public display name</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -169,7 +156,7 @@ export function SignupForm({
                       <Input {...field} type="password" />
                     </FormControl>
                     <FormDescription>
-                        Must be at least 8 characters long, contain a number, and a special character
+                      Must be at least 8 characters long, contain a number, and a special character
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -184,9 +171,7 @@ export function SignupForm({
                     <FormControl>
                       <Input {...field} type="password" />
                     </FormControl>
-                    <FormDescription>
-                        Re-enter your password to confirm it
-                    </FormDescription>
+                    <FormDescription>Re-enter your password to confirm it</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -194,7 +179,11 @@ export function SignupForm({
               {form.formState.errors.root && (
                 <FormMessage>{form.formState.errors.root.message}</FormMessage>
               )}
-              <Button type='submit' className="w-full" disabled={createUserMutation.isPending || createUserMutation.isSuccess}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={createUserMutation.isPending || createUserMutation.isSuccess}
+              >
                 Signup
               </Button>
               <div className="text-center text-sm">
@@ -205,9 +194,7 @@ export function SignupForm({
               </div>
             </div>
             <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-              <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                or
-              </span>
+              <span className="relative z-10 bg-background px-2 text-muted-foreground">or</span>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <Button variant="outline" className="w-full" disabled>
@@ -233,8 +220,8 @@ export function SignupForm({
         </form>
       </Form>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary  ">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>&nbsp;
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>&nbsp; and{' '}
+        <a href="#">Privacy Policy</a>.
       </div>
     </div>
   )

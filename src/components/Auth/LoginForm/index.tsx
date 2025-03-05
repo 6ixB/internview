@@ -33,10 +33,7 @@ const userLoginSchema = z.object({
 
 type UserLoginDto = z.infer<typeof userLoginSchema>
 
-export function LoginForm({
-  className,
-  ...props
-}: React.ComponentProps<'div'>) {
+export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const searchParams = useSearchParams()
 
   const form = useForm<UserLoginDto>({
@@ -54,7 +51,7 @@ export function LoginForm({
       const { email, password } = values
 
       const response = await fetch('/api/users/login', {
-        method: 'POST', 
+        method: 'POST',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +73,7 @@ export function LoginForm({
       }
 
       const redirect = searchParams.get('redirect')
-      
+
       if (redirect) {
         router.push(redirect as string)
       } else {
@@ -87,27 +84,24 @@ export function LoginForm({
       form.setError('root', {
         type: 'manual',
         message: error.message,
-      });
-    },
-  })
-  
-  const onSubmit = useCallback(
-    async (values: UserLoginDto) => {
-      toast.promise(loginUserMutation.mutateAsync(values), {
-        loading: 'Logging in to your account...',
-        success: 'Login successful',
-        error: (error) => error.message,
       })
     },
-    []
-  )
+  })
+
+  const onSubmit = useCallback(async (values: UserLoginDto) => {
+    toast.promise(loginUserMutation.mutateAsync(values), {
+      loading: 'Logging in to your account...',
+      success: 'Login successful',
+      error: (error) => error.message,
+    })
+  }, [])
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card className="overflow-hidden">
         <CardContent className="grid p-0 md:grid-cols-2">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}  className="p-6 md:p-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col items-center text-center">
                   <h1 className="text-xl font-bold">Welcome back</h1>
@@ -122,11 +116,9 @@ export function LoginForm({
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input {...field} autoComplete="email"  placeholder="john.doe@example.com" />
+                        <Input {...field} autoComplete="email" placeholder="john.doe@example.com" />
                       </FormControl>
-                      <FormDescription>
-                        Use your registered email to login
-                      </FormDescription>
+                      <FormDescription>Use your registered email to login</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -138,11 +130,9 @@ export function LoginForm({
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input {...field} autoComplete="current-password"  type="password" />
+                        <Input {...field} autoComplete="current-password" type="password" />
                       </FormControl>
-                      <FormDescription>
-                        Enter your password to login
-                      </FormDescription>
+                      <FormDescription>Enter your password to login</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -150,7 +140,11 @@ export function LoginForm({
                 {form.formState.errors.root && (
                   <FormMessage>{form.formState.errors.root.message}</FormMessage>
                 )}
-                <Button type="submit" className="w-full" disabled={loginUserMutation.isPending || loginUserMutation.isSuccess}>
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={loginUserMutation.isPending || loginUserMutation.isSuccess}
+                >
                   Login
                 </Button>
                 <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
@@ -206,8 +200,8 @@ export function LoginForm({
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>&nbsp;
-        and <a href="#">Privacy Policy</a>.
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>&nbsp; and{' '}
+        <a href="#">Privacy Policy</a>.
       </div>
     </div>
   )

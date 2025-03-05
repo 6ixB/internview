@@ -1,6 +1,6 @@
-import { Access } from "payload"
+import { Access } from 'payload'
 
-import { checkRole } from "./checkRole"
+import { checkRole } from './checkRole'
 
 const adminsAndUser: Access = ({ req: { user } }) => {
   if (user) {
@@ -14,8 +14,8 @@ const adminsAndUser: Access = ({ req: { user } }) => {
       },
     }
   }
-  
+
   return false
 }
-  
+
 export default adminsAndUser

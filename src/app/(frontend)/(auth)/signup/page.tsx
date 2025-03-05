@@ -30,4 +30,3 @@ export function generateMetadata(): Metadata {
     title: `Signup`,
   }
 }
-  

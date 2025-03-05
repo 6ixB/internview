@@ -1,6 +1,6 @@
-import { User } from "@/payload-types"
+import { User } from '@/payload-types'
 
-import { FieldHook } from "payload"
+import { FieldHook } from 'payload'
 
 // ensure there is always a `user` role
 // do not let non-admins change roles
@@ -15,4 +15,3 @@ export const protectRoles: FieldHook<{ id: string } & User> = ({ data, req }) =>
   userRoles.add('user')
   return [...userRoles]
 }
-  

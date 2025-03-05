@@ -25,7 +25,7 @@ export default async function AuthRootLayout({ children }: { children: React.Rea
       <body>
         <Providers>
           {children}
-          <Toaster position="top-right" expand={true} richColors closeButton  />
+          <Toaster position="top-right" expand={true} richColors closeButton />
           <Footer />
         </Providers>
       </body>
