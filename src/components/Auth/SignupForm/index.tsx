@@ -17,10 +17,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { toast } from 'sonner'
-import { GalleryVerticalEnd } from 'lucide-react'
 import Link from 'next/link'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
+import { Logo } from '@/components/Logo/Logo'
 
 const createUserDtoSchema = z.object({
   email: z.string().email({
@@ -83,22 +83,25 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
     },
   })
 
-  const onSubmit = useCallback(async (values: CreateUserDto) => {
-    const { password, confirmPassword } = values
+  const onSubmit = useCallback(
+    async (values: CreateUserDto) => {
+      const { password, confirmPassword } = values
 
-    if (password !== confirmPassword) {
-      form.setError('password', {
-        message: 'Passwords do not match',
+      if (password !== confirmPassword) {
+        form.setError('password', {
+          message: 'Passwords do not match',
+        })
+        return
+      }
+
+      toast.promise(createUserMutation.mutateAsync(values), {
+        loading: 'Creating your account...',
+        success: 'Account created successfully',
+        error: (error) => error.message,
       })
-      return
-    }
-
-    toast.promise(createUserMutation.mutateAsync(values), {
-      loading: 'Creating your account...',
-      success: 'Account created successfully',
-      error: (error) => error.message,
-    })
-  }, [])
+    },
+    [createUserMutation, form],
+  )
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -107,14 +110,14 @@ export function SignupForm({ className, ...props }: React.ComponentPropsWithoutR
           <div className="flex flex-col gap-3">
             <div className="flex flex-col items-center gap-2">
               <Link href="/" className="flex flex-col items-center gap-2 font-medium">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md">
-                  <GalleryVerticalEnd className="size-6" />
+                <div className="flex items-center justify-center rounded-md">
+                  <Logo loading="eager" priority="high" className="invert-0 dark:invert" />
                 </div>
                 <span className="sr-only">Internview</span>
               </Link>
               <h1 className="text-xl font-bold">Welcome to Internview</h1>
               <div className="text-center text-sm">
-                Let's get started. Fill in the details below to create your account.
+                Let&apos;s get started. Fill in the details below to create your account.
               </div>
             </div>
             <div className="flex flex-col gap-3">

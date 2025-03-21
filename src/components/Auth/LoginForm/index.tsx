@@ -5,6 +5,7 @@ import { cn } from '@/utilities/ui'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -21,6 +22,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { useMutation } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
+import { Logo } from '@/components/Logo/Logo'
 
 const userLoginSchema = z.object({
   email: z.string().email({
@@ -88,13 +90,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     },
   })
 
-  const onSubmit = useCallback(async (values: UserLoginDto) => {
-    toast.promise(loginUserMutation.mutateAsync(values), {
-      loading: 'Logging in to your account...',
-      success: 'Login successful',
-      error: (error) => error.message,
-    })
-  }, [])
+  const onSubmit = useCallback(
+    async (values: UserLoginDto) => {
+      toast.promise(loginUserMutation.mutateAsync(values), {
+        loading: 'Logging in to your account...',
+        success: 'Login successful',
+        error: (error) => error.message,
+      })
+    },
+    [loginUserMutation],
+  )
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
@@ -104,6 +109,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
               <div className="flex flex-col gap-3">
                 <div className="flex flex-col items-center text-center">
+                  <Link href="/" className="flex flex-col items-center gap-2 font-medium mb-2">
+                    <div className="flex items-center justify-center rounded-md">
+                      <Logo loading="eager" priority="high" className="invert-0 dark:invert" />
+                    </div>
+                    <span className="sr-only">Internview</span>
+                  </Link>
                   <h1 className="text-xl font-bold">Welcome back</h1>
                   <p className="text-balance text-muted-foreground">
                     Login to your Internview account
@@ -191,7 +202,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             </form>
           </Form>
           <div className="relative hidden bg-muted md:block">
-            <img
+            <Image
+              width={0}
+              height={0}
               src="/placeholder.svg"
               alt="Image"
               className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
