@@ -52,10 +52,22 @@ export const FormBlock: React.FC<
       const submitForm = async () => {
         setError(undefined)
 
-        const dataToSend = Object.entries(data).map(([name, value]) => ({
-          field: name,
-          value,
-        }))
+        const qa_list = Object.entries(data).map(([name, value]) => {
+          const field = formFromProps.fields.find((f: any) => f.name === name)
+          return {
+            question: field?.label || name,
+            answer: value,
+          }
+        })
+
+        console.log("qa_list", qa_list);
+
+        const dataToSend = {
+          qa_list,
+          prompt: 'Buat ringkasan menggunakan bahasa indonesia dari wawancara ini dalam bentuk artikel paragraf, dengan tujuan membantu orang lain yang juga akan mengikuti wawancara yang sama. Tolong bandingkan juga jawaban peserta yang lulus dan tidak, apa yang membuat mereka lulus atau tidak lulus? sertakan jawabannya dalam artikel.  jika menemukan kalimat satir atau kata-kata tidak pantas, jangan dimasukkan ke dalam artikel, pastikan yang dimasukkan ke artikel hanya hal-hal yang berguna untuk membantu orang lain yang ingin melamar di pekerjaan yang sama. Pastikan ringkasannya dalam bentuk artikel, jangan diformat bold atau italic, tidak pakai point, tidak pakai \'*\'. Berikan Judul yang menarik dan unik yang merepresentasikan artikel tersebut.'
+        }
+
+        console.log("data to send", dataToSend);
 
         // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {
@@ -76,9 +88,23 @@ export const FormBlock: React.FC<
 
           const res = await req.json()
 
+          console.log("Payload CMS response:", res)
+
+          const customRes = await fetch(`http://127.0.0.1:8000/generate-article`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(dataToSend),
+          })
+  
+          const customJSON = await customRes.json()
+          console.log("Custom API response:", customJSON)
+
+
           clearTimeout(loadingTimerID)
 
-          if (req.status >= 400) {
+          if (req.status >= 400 || customRes.status >= 400) {
             setIsLoading(false)
 
             setError({
