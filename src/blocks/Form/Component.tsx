@@ -3,8 +3,9 @@ import type { FormFieldBlock, Form as FormType } from '@payloadcms/plugin-form-b
 
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import RichText from '@/components/RichText'
+import { Form } from '@/components/ui/form'
 import { Button } from '@/components/ui/button'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 
@@ -32,6 +33,7 @@ export const FormBlock: React.FC<
   } = props
 
   const formMethods = useForm({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     defaultValues: formFromProps.fields as any,
   })
   const {
@@ -140,12 +142,12 @@ export const FormBlock: React.FC<
   )
 
   return (
-    <div className="container lg:max-w-[48rem]">
+    <div className="container lg:max-w-[56rem]">
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}
-      <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
-        <FormProvider {...formMethods}>
+      <div className="p-4 lg:p-6">
+        <Form {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
           )}
@@ -182,7 +184,7 @@ export const FormBlock: React.FC<
               </Button>
             </form>
           )}
-        </FormProvider>
+        </Form>
       </div>
     </div>
   )

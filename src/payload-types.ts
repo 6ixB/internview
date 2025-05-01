@@ -191,7 +191,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | FeedBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -568,6 +568,7 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             required?: boolean | null;
+            checkboxDescription?: string | null;
             defaultValue?: boolean | null;
             id?: string | null;
             blockName?: string | null;
@@ -577,6 +578,7 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
+            countryDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
@@ -586,12 +588,14 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
+            emailDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'email';
           }
         | {
+            messageDescription?: string | null;
             message?: {
               root: {
                 type: string;
@@ -616,6 +620,7 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             defaultValue?: number | null;
+            numberDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
@@ -634,6 +639,7 @@ export interface Form {
                   id?: string | null;
                 }[]
               | null;
+            selectDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
@@ -643,6 +649,7 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
+            stateDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
@@ -653,6 +660,7 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             defaultValue?: string | null;
+            textDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
@@ -663,10 +671,24 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             defaultValue?: string | null;
+            textareaDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
             blockName?: string | null;
             blockType: 'textarea';
+          }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            defaultValue?: string | null;
+            placeholder?: string | null;
+            datePickerDescription?: string | null;
+            required?: boolean | null;
+            range?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'datePicker';
           }
       )[]
     | null;
@@ -727,6 +749,16 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeedBlock".
+ */
+export interface FeedBlock {
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'feedBlock';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1018,6 +1050,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        feedBlock?: T | FeedBlockSelect<T>;
       };
   meta?:
     | T
@@ -1114,6 +1147,15 @@ export interface FormBlockSelect<T extends boolean = true> {
   form?: T;
   enableIntro?: T;
   introContent?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeedBlock_select".
+ */
+export interface FeedBlockSelect<T extends boolean = true> {
+  limit?: T;
   id?: T;
   blockName?: T;
 }
@@ -1310,6 +1352,7 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               required?: T;
+              checkboxDescription?: T;
               defaultValue?: T;
               id?: T;
               blockName?: T;
@@ -1320,6 +1363,7 @@ export interface FormsSelect<T extends boolean = true> {
               name?: T;
               label?: T;
               width?: T;
+              countryDescription?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1330,6 +1374,7 @@ export interface FormsSelect<T extends boolean = true> {
               name?: T;
               label?: T;
               width?: T;
+              emailDescription?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1337,6 +1382,7 @@ export interface FormsSelect<T extends boolean = true> {
         message?:
           | T
           | {
+              messageDescription?: T;
               message?: T;
               id?: T;
               blockName?: T;
@@ -1348,6 +1394,7 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               defaultValue?: T;
+              numberDescription?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1367,6 +1414,7 @@ export interface FormsSelect<T extends boolean = true> {
                     value?: T;
                     id?: T;
                   };
+              selectDescription?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1377,6 +1425,7 @@ export interface FormsSelect<T extends boolean = true> {
               name?: T;
               label?: T;
               width?: T;
+              stateDescription?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1388,6 +1437,7 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               defaultValue?: T;
+              textDescription?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1399,7 +1449,22 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               defaultValue?: T;
+              textareaDescription?: T;
               required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        datePicker?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              defaultValue?: T;
+              placeholder?: T;
+              datePickerDescription?: T;
+              required?: T;
+              range?: T;
               id?: T;
               blockName?: T;
             };

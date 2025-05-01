@@ -22,7 +22,7 @@ export const Logo = (props: Props) => {
       loading={loading}
       fetchPriority={priority}
       decoding="async"
-      className={clsx('max-w-[25px] w-full h-[15px]', className)}
+      className={clsx('max-w-[25px] w-full h-[15px] select-none', className)}
       src="/internview.svg"
     />
   )

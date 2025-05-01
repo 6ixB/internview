@@ -4,7 +4,7 @@ import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
-import { Plugin } from 'payload'
+import { Block, Plugin } from 'payload'
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -13,9 +13,10 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { DatePicker } from '@/blocks/Form/block'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | Payload Website Template` : 'Payload Website Template'
+  return doc?.title ? `${doc.title} | Internview` : 'Internview'
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
@@ -58,8 +59,10 @@ export const plugins: Plugin[] = [
   formBuilderPlugin({
     fields: {
       payment: false,
+      datePicker: DatePicker,
     },
     formOverrides: {
+      // @ts-expect-error - This is a valid override, mapped fields do resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
@@ -76,6 +79,32 @@ export const plugins: Plugin[] = [
               }),
             }
           }
+          // Adds a description field to each block in the form builder
+          else if ('name' in field && field.name === 'fields') {
+            return {
+              ...field,
+              blocks:
+                'blocks' in field &&
+                field.blocks.map((block: Block) => ({
+                  ...block,
+                  fields: [
+                    ...block.fields.slice(0, -1), // Everything except the required field (last item)
+                    {
+                      type: 'row',
+                      fields: [
+                        {
+                          name: `${block.slug}Description`,
+                          type: 'text',
+                          label: 'Description',
+                        },
+                      ],
+                    },
+                    block.fields[block.fields.length - 1], // Insert the required field back in
+                  ],
+                })),
+            }
+          }
+
           return field
         })
       },

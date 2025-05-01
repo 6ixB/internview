@@ -62,10 +62,10 @@ export const UserNav: React.FC<{ user: User }> = ({ user }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="ms-4 relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8 ring-2 ring-rose-700 dark:ring-cyan-700">
+        <Button variant="ghost" className="ms-2 relative h-8 w-8 rounded-full">
+          <Avatar className="h-8 w-8 ring-2 ring-cyan-700">
             <AvatarImage src="" alt={user.name} />
-            <AvatarFallback>{fallbackName}</AvatarFallback>
+            <AvatarFallback className="text-xs">{fallbackName}</AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>

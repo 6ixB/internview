@@ -1,7 +1,7 @@
 import type { TextField } from '@payloadcms/plugin-form-builder/types'
 import type { FieldErrorsImpl, FieldValues, UseFormRegister } from 'react-hook-form'
 
-import { Label } from '@/components/ui/label'
+import { FormControl, FormDescription, FormItem, FormLabel } from '@/components/ui/form'
 import { Textarea as TextAreaComponent } from '@/components/ui/textarea'
 import React from 'react'
 
@@ -13,28 +13,40 @@ export const Textarea: React.FC<
     errors: Partial<FieldErrorsImpl>
     register: UseFormRegister<FieldValues>
     rows?: number
-  }
-> = ({ name, defaultValue, errors, label, register, required, rows = 3, width }) => {
+  } & { textareaDescription?: string }
+> = ({
+  name,
+  defaultValue,
+  errors,
+  label,
+  register,
+  required,
+  rows = 3,
+  width,
+  textareaDescription,
+}) => {
   return (
     <Width width={width}>
-      <Label htmlFor={name}>
-        {label}
-
-        {required && (
-          <span className="required">
-            * <span className="sr-only">(required)</span>
-          </span>
-        )}
-      </Label>
-
-      <TextAreaComponent
-        defaultValue={defaultValue}
-        id={name}
-        rows={rows}
-        {...register(name, { required: required })}
-      />
-
-      {errors[name] && <Error />}
+      <FormItem>
+        <FormLabel htmlFor={name}>
+          {label}
+          {required && (
+            <span className="required text-red-500">
+              &nbsp;*&nbsp;<span className="sr-only">(required)</span>
+            </span>
+          )}
+        </FormLabel>
+        <FormDescription>{textareaDescription}</FormDescription>
+        <FormControl>
+          <TextAreaComponent
+            defaultValue={defaultValue}
+            id={name}
+            rows={rows}
+            {...register(name, { required: required })}
+          />
+        </FormControl>
+        {errors[name] && <Error />}
+      </FormItem>
     </Width>
   )
 }
