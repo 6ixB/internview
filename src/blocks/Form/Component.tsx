@@ -11,6 +11,10 @@ import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical
 
 import { fields } from './fields'
 import { getClientSideURL } from '@/utilities/getURL'
+import { z } from 'zod'
+import { useMutation } from '@tanstack/react-query'
+import { useAuth } from '@/providers/Auth'
+import { Post } from '@/payload-types'
 
 export type FormBlockType = {
   blockName?: string
@@ -19,6 +23,41 @@ export type FormBlockType = {
   form: FormType
   introContent?: SerializedEditorState
 }
+
+const questionAndAnswerDtoSchema = z.object({
+  question: z.string(),
+  answer: z.string(),
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const generatePostDtoSchema = z.object({
+  qa_list: z.array(questionAndAnswerDtoSchema),
+  prompt: z.string(),
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const createPostDtoSchema = z.object({
+  title: z.string(),
+  content: z.unknown(),
+  meta: z.object({
+    title: z.string(),
+    description: z.string(),
+  }),
+  publishedAt: z.string(),
+  authors: z.array(z.unknown()),
+})
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const postEntitySchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  content: z.string(),
+})
+
+type QuestionAndAnswerDto = z.infer<typeof questionAndAnswerDtoSchema>
+type GeneratePostDto = z.infer<typeof generatePostDtoSchema>
+type CreatePostDto = z.infer<typeof createPostDtoSchema>
+type PostEntity = z.infer<typeof postEntitySchema>
 
 export const FormBlock: React.FC<
   {
@@ -31,6 +70,8 @@ export const FormBlock: React.FC<
     form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
   } = props
+
+  const { user } = useAuth()
 
   const formMethods = useForm({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,97 +89,188 @@ export const FormBlock: React.FC<
   const [error, setError] = useState<{ message: string; status?: string } | undefined>()
   const router = useRouter()
 
-  const onSubmit = useCallback(
-    (data: FormFieldBlock[]) => {
-      let loadingTimerID: ReturnType<typeof setTimeout>
-      const submitForm = async () => {
-        setError(undefined)
+  // const onSubmit = useCallback(
+  //   (data: FormFieldBlock[]) => {
+  //     let loadingTimerID: ReturnType<typeof setTimeout>
+  //     const submitForm = async () => {
+  //       setError(undefined)
 
-        const qa_list = Object.entries(data).map(([name, value]) => {
-          const field = formFromProps.fields.find((f: any) => f.name === name)
+  //       const dataToSend = Object.entries(data).map(([name, value]) => ({
+  //         field: name,
+  //         value,
+  //       }))
+
+  //       // delay loading indicator by 1s
+  //       loadingTimerID = setTimeout(() => {
+  //         setIsLoading(true)
+  //       }, 1000)
+
+  //       try {
+  //         const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
+  //           body: JSON.stringify({
+  //             form: formID,
+  //             submissionData: dataToSend,
+  //           }),
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           method: 'POST',
+  //         })
+
+  //         const res = await req.json()
+
+  //         clearTimeout(loadingTimerID)
+
+  //         if (req.status >= 400) {
+  //           setIsLoading(false)
+
+  //           setError({
+  //             message: res.errors?.[0]?.message || 'Internal Server Error',
+  //             status: res.status,
+  //           })
+
+  //           return
+  //         }
+
+  //         setIsLoading(false)
+  //         setHasSubmitted(true)
+
+  //         if (confirmationType === 'redirect' && redirect) {
+  //           const { url } = redirect
+
+  //           const redirectUrl = url
+
+  //           if (redirectUrl) router.push(redirectUrl)
+  //         }
+  //       } catch (err) {
+  //         console.warn(err)
+  //         setIsLoading(false)
+  //         setError({
+  //           message: 'Something went wrong.',
+  //         })
+  //       }
+  //     }
+
+  //     void submitForm()
+  //   },
+  //   [router, formID, redirect, confirmationType],
+  // )
+
+  const generatePostMutation = useMutation({
+    mutationFn: async (dataToSend: GeneratePostDto): Promise<PostEntity> => {
+      const response = await fetch('http://localhost:8000/generate-article', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      })
+
+      if (!response.ok) throw new Error('Failed to generate post')
+
+      const data = await response.json()
+      return data
+    },
+  })
+
+  const createPostMutation = useMutation({
+    mutationFn: async (dataToSend: CreatePostDto): Promise<Post> => {
+      const response = await fetch('http://localhost:3000/api/posts', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      })
+
+      if (!response.ok) throw new Error('Failed to create post')
+
+      const data = await response.json()
+      return data
+    },
+  })
+
+  const onSubmit = useCallback(
+    async (data: FormFieldBlock[]) => {
+      // @ts-expect-error - This is valid, but TypeScript doesn't know that fields is an array of FormFieldBlock
+      const questionAndAnswers: QuestionAndAnswerDto[] = Object.entries(data).map(
+        ([name, value]) => {
+          // @ts-expect-error - TypeScript doesn't know that fields is an array of FormFieldBlock
+          const questionLabel = formFromProps.fields.find((field) => field?.name === name)?.label
           return {
-            question: field?.label || name,
+            question: questionLabel,
             answer: value,
           }
-        })
+        },
+      )
 
-        console.log("qa_list", qa_list);
+      // This is implicitly added to the question and answer list
+      questionAndAnswers.push({
+        question: 'What is your name?',
+        answer: user?.name || 'Anonymous',
+      })
 
-        const dataToSend = {
-          qa_list,
-          prompt: 'Buat ringkasan menggunakan bahasa indonesia dari wawancara ini dalam bentuk artikel paragraf, dengan tujuan membantu orang lain yang juga akan mengikuti wawancara yang sama. Tolong bandingkan juga jawaban peserta yang lulus dan tidak, apa yang membuat mereka lulus atau tidak lulus? sertakan jawabannya dalam artikel.  jika menemukan kalimat satir atau kata-kata tidak pantas, jangan dimasukkan ke dalam artikel, pastikan yang dimasukkan ke artikel hanya hal-hal yang berguna untuk membantu orang lain yang ingin melamar di pekerjaan yang sama. Pastikan ringkasannya dalam bentuk artikel, jangan diformat bold atau italic, tidak pakai point, tidak pakai \'*\'. Berikan Judul yang menarik dan unik yang merepresentasikan artikel tersebut.'
-        }
-
-        console.log("data to send", dataToSend);
-
-        // delay loading indicator by 1s
-        loadingTimerID = setTimeout(() => {
-          setIsLoading(true)
-        }, 1000)
-
-        try {
-          const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
-            body: JSON.stringify({
-              form: formID,
-              submissionData: dataToSend,
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            method: 'POST',
-          })
-
-          const res = await req.json()
-
-          console.log("Payload CMS response:", res)
-
-          const customRes = await fetch(`http://127.0.0.1:8000/generate-article`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(dataToSend),
-          })
-  
-          const customJSON = await customRes.json()
-          console.log("Custom API response:", customJSON)
-
-
-          clearTimeout(loadingTimerID)
-
-          if (req.status >= 400 || customRes.status >= 400) {
-            setIsLoading(false)
-
-            setError({
-              message: res.errors?.[0]?.message || 'Internal Server Error',
-              status: res.status,
-            })
-
-            return
-          }
-
-          setIsLoading(false)
-          setHasSubmitted(true)
-
-          if (confirmationType === 'redirect' && redirect) {
-            const { url } = redirect
-
-            const redirectUrl = url
-
-            if (redirectUrl) router.push(redirectUrl)
-          }
-        } catch (err) {
-          console.warn(err)
-          setIsLoading(false)
-          setError({
-            message: 'Something went wrong.',
-          })
-        }
+      const dataToSend: GeneratePostDto = {
+        qa_list: questionAndAnswers,
+        // @ts-expect-error - TypeScript doesn't know prompt exists on formFromProps
+        prompt: formFromProps.prompt,
       }
 
-      void submitForm()
+      const post = await generatePostMutation.mutateAsync(dataToSend)
+
+      const createPostData: CreatePostDto = {
+        title: post.title,
+        content: {
+          root: {
+            children: [
+              {
+                children: [
+                  {
+                    detail: 0,
+                    format: 0,
+                    mode: 'normal',
+                    style: '',
+                    text: post.content,
+                    type: 'text',
+                    version: 1,
+                  },
+                ],
+                direction: 'ltr',
+                format: '',
+                indent: 0,
+                type: 'paragraph',
+                version: 1,
+                textFormat: 0,
+                textStyle: '',
+              },
+            ],
+            direction: 'ltr',
+            format: '',
+            indent: 0,
+            type: 'root',
+            version: 1,
+          },
+        },
+        meta: {
+          title: post.title,
+          description: post.description,
+        },
+        publishedAt: new Date().toISOString(),
+        authors: [user],
+      }
+
+      const createdPostEntity = await createPostMutation.mutateAsync(createPostData)
+      console.log('Created post entity:', createdPostEntity)
     },
-    [router, formID, redirect, confirmationType],
+    [
+      createPostMutation,
+      formFromProps.fields,
+      // @ts-expect-error - TypeScript doesn't know prompt exists on formFromProps
+      formFromProps.prompt,
+      generatePostMutation,
+      user,
+    ],
   )
 
   return (

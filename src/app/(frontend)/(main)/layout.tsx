@@ -5,7 +5,6 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
-import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
@@ -28,7 +27,6 @@ export default async function MainRootLayout({ children }: { children: React.Rea
           <Toaster position="bottom-right" expand={true} richColors closeButton />
           <Header />
           {children}
-          <Footer />
         </Providers>
       </body>
     </html>

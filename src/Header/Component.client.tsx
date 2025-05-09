@@ -22,38 +22,40 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 
   return (
     <header className="w-full sticky top-0 z-20 bg-background border-b border-gray-200 dark:border-gray-800">
-      <div className="w-full py-2 px-8 flex justify-between">
-        <nav className="flex gap-3 items-center select-none min-w-2xl">
+      <div className="container py-2 md:px-12 lg:px-8 grid grid-cols-3">
+        <nav className="flex gap-3 justify-start items-center select-none min-w-2xl">
           <Link href="/" className="flex items-center gap-3 mr-6">
             <Logo loading="eager" priority="high" className="invert-0 dark:invert" />
-            <h1 className="text-xl font-semibold">Internview</h1>
+            <h1 className="hidden md:block text-xl font-semibold">Internview</h1>
           </Link>
           {navItems.map(({ link }, i) => {
             return <CMSLink key={i} {...link} appearance="link" />
           })}
         </nav>
-        <div className="relative w-full max-w-lg">
-          <SearchIcon className="absolute top-2.5 left-3.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            name="search"
-            onChange={(e) => {
-              setQuery(e.target.value)
-            }}
-            value={query}
-            placeholder="Search Internview"
-            className="w-full px-10 rounded-full bg-gray-100 dark:bg-gray-800 outline-none border-none ring-0"
-          />
-          {query && (
-            <XIcon
-              className="absolute top-2.5 right-2.5 h-4 w-4 cursor-pointer text-muted-foreground"
-              onClick={() => {
-                setQuery('')
+        <div className="flex justify-center items-center ">
+          <div className="hidden lg:block relative w-full max-w-lg">
+            <SearchIcon className="absolute top-2.5 left-3.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              name="search"
+              onChange={(e) => {
+                setQuery(e.target.value)
               }}
+              value={query}
+              placeholder="Search Internview"
+              className="w-full px-10 rounded-full bg-gray-100 dark:bg-gray-800 outline-none border-none ring-0"
             />
-          )}
-          <span className="sr-only">Search</span>
+            {query && (
+              <XIcon
+                className="absolute top-2.5 right-2.5 h-4 w-4 cursor-pointer text-muted-foreground"
+                onClick={() => {
+                  setQuery('')
+                }}
+              />
+            )}
+            <span className="sr-only">Search</span>
+          </div>
         </div>
-        <nav className="flex gap-2 items-center min-w-2xl">
+        <nav className="flex gap-2 justify-end items-center min-w-2xl">
           {user ? (
             <>
               <Link href="/create-post">

@@ -64,7 +64,7 @@ export const plugins: Plugin[] = [
     formOverrides: {
       // @ts-expect-error - This is a valid override, mapped fields do resolve to the same type
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
+        const originalFields = defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,
@@ -107,6 +107,17 @@ export const plugins: Plugin[] = [
 
           return field
         })
+
+        return [
+          ...originalFields.slice(0, 1),
+          {
+            name: 'prompt',
+            type: 'textarea',
+            defaultValue: 'Please write a detailed article about your interview experience.',
+            required: true,
+          },
+          ...originalFields.slice(1, originalFields.length),
+        ]
       },
     },
   }),

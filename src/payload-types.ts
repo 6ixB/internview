@@ -561,6 +561,7 @@ export interface FormBlock {
 export interface Form {
   id: number;
   title: string;
+  prompt: string;
   fields?:
     | (
         | {
@@ -1342,6 +1343,7 @@ export interface RedirectsSelect<T extends boolean = true> {
  */
 export interface FormsSelect<T extends boolean = true> {
   title?: T;
+  prompt?: T;
   fields?:
     | T
     | {

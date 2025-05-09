@@ -28,7 +28,7 @@ export const FeedBlock: React.FC<
   posts = fetchedPosts.docs
 
   return (
-    <div className="my-16" id={`block-${id}`}>
+    <div id={`block-${id}`}>
       <Feed posts={posts} />
     </div>
   )
