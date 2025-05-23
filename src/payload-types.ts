@@ -691,6 +691,23 @@ export interface Form {
             blockName?: string | null;
             blockType: 'datePicker';
           }
+        | {
+            name: string;
+            label?: string | null;
+            width?: number | null;
+            items?:
+              | {
+                  label?: string | null;
+                  value?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            draggableListDescription?: string | null;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'draggableList';
+          }
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -1467,6 +1484,24 @@ export interface FormsSelect<T extends boolean = true> {
               datePickerDescription?: T;
               required?: T;
               range?: T;
+              id?: T;
+              blockName?: T;
+            };
+        draggableList?:
+          | T
+          | {
+              name?: T;
+              label?: T;
+              width?: T;
+              items?:
+                | T
+                | {
+                    label?: T;
+                    value?: T;
+                    id?: T;
+                  };
+              draggableListDescription?: T;
+              required?: T;
               id?: T;
               blockName?: T;
             };

@@ -10,6 +10,7 @@ import { CircleUserRoundIcon, SearchIcon, SquarePenIcon, XIcon } from 'lucide-re
 import { UserNav } from './UserNav'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 
 interface HeaderClientProps {
   data: Header
@@ -56,6 +57,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
           </div>
         </div>
         <nav className="flex gap-2 justify-end items-center min-w-2xl">
+          <ThemeSelector />
           {user ? (
             <>
               <Link href="/create-post">

@@ -13,7 +13,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
-import { DatePicker } from '@/blocks/Form/block'
+import { DatePicker, DraggableList } from '@/blocks/Form/block'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Internview` : 'Internview'
@@ -60,6 +60,7 @@ export const plugins: Plugin[] = [
     fields: {
       payment: false,
       datePicker: DatePicker,
+      draggableList: DraggableList,
     },
     formOverrides: {
       // @ts-expect-error - This is a valid override, mapped fields do resolve to the same type
@@ -112,6 +113,8 @@ export const plugins: Plugin[] = [
           ...originalFields.slice(0, 1),
           {
             name: 'prompt',
+            label:
+              'Prompt (Please provide details on how to generate the article based on the form submission)',
             type: 'textarea',
             defaultValue: 'Please write a detailed article about your interview experience.',
             required: true,

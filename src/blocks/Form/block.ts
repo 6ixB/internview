@@ -108,3 +108,71 @@ export const DatePicker: Block = {
     },
   ],
 }
+
+export const DraggableList: Block = {
+  slug: 'draggableList',
+  labels: {
+    singular: 'Draggable List',
+    plural: 'Draggable Lists',
+  },
+  fields: [
+    {
+      type: 'row',
+      fields: [
+        {
+          ...name,
+          admin: {
+            width: '50%',
+          },
+        },
+        {
+          ...label,
+          admin: {
+            width: '50%',
+          },
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          ...width,
+          admin: {
+            width: '100%',
+          },
+        },
+      ],
+    },
+    {
+      type: 'array',
+      name: 'items',
+      label: 'Items',
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          label: 'Label',
+          localized: true,
+        },
+        {
+          name: 'value',
+          type: 'text',
+          label: 'Value',
+          localized: true,
+        },
+      ],
+    },
+    {
+      type: 'row',
+      fields: [
+        {
+          ...required,
+          admin: {
+            width: '100%',
+          },
+        },
+      ],
+    },
+  ],
+}

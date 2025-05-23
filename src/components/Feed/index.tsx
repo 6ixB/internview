@@ -1,4 +1,3 @@
-import { cn } from '@/utilities/ui'
 import React from 'react'
 
 import { CompactCard, CardPostData } from '@/components/Card/Compact'
@@ -9,7 +8,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { headers as getHeaders } from 'next/headers'
@@ -29,7 +27,7 @@ export const Feed: React.FC<Props> = async (props) => {
   const { posts } = props
 
   return (
-    <div className={cn('container flex justify-center')}>
+    <div className="container flex justify-center h-dvh">
       <div className="flex-1 flex flex-col items-center md:border-x divide-y border-border max-w-fit">
         {posts?.map((result, index) => {
           if (typeof result === 'object' && result !== null) {
@@ -107,7 +105,6 @@ export const Feed: React.FC<Props> = async (props) => {
                 </Button>
               </Link>
             )}
-            <ThemeSelector />
           </div>
         </div>
       </div>

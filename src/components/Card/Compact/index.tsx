@@ -1,19 +1,11 @@
 'use client'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 import React from 'react'
 
 import type { Post, User } from '@/payload-types'
 
-import { Media } from '@/components/Media'
 import { Badge } from '@/components/ui/badge'
 
 export type CardPostData = Pick<
@@ -37,8 +29,6 @@ export const CompactCard: React.FC<{
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
   const href = `/${relationTo}/${slug}`
-
-  console.info(title, authors)
 
   return (
     <Link href={href}>

@@ -45,6 +45,7 @@ const createPostDtoSchema = z.object({
   }),
   publishedAt: z.string(),
   authors: z.array(z.unknown()),
+  _status: z.enum(['draft', 'published']),
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -193,82 +194,101 @@ export const FormBlock: React.FC<
 
   const onSubmit = useCallback(
     async (data: FormFieldBlock[]) => {
-      // @ts-expect-error - This is valid, but TypeScript doesn't know that fields is an array of FormFieldBlock
-      const questionAndAnswers: QuestionAndAnswerDto[] = Object.entries(data).map(
-        ([name, value]) => {
-          // @ts-expect-error - TypeScript doesn't know that fields is an array of FormFieldBlock
-          const questionLabel = formFromProps.fields.find((field) => field?.name === name)?.label
-          return {
-            question: questionLabel,
-            answer: value,
-          }
-        },
-      )
+      try {
+        setIsLoading(true)
 
-      // This is implicitly added to the question and answer list
-      questionAndAnswers.push({
-        question: 'What is your name?',
-        answer: user?.name || 'Anonymous',
-      })
-
-      const dataToSend: GeneratePostDto = {
-        qa_list: questionAndAnswers,
-        // @ts-expect-error - TypeScript doesn't know prompt exists on formFromProps
-        prompt: formFromProps.prompt,
-      }
-
-      const post = await generatePostMutation.mutateAsync(dataToSend)
-
-      const createPostData: CreatePostDto = {
-        title: post.title,
-        content: {
-          root: {
-            children: [
-              {
-                children: [
-                  {
-                    detail: 0,
-                    format: 0,
-                    mode: 'normal',
-                    style: '',
-                    text: post.content,
-                    type: 'text',
-                    version: 1,
-                  },
-                ],
-                direction: 'ltr',
-                format: '',
-                indent: 0,
-                type: 'paragraph',
-                version: 1,
-                textFormat: 0,
-                textStyle: '',
-              },
-            ],
-            direction: 'ltr',
-            format: '',
-            indent: 0,
-            type: 'root',
-            version: 1,
+        // @ts-expect-error - This is valid, but TypeScript doesn't know that fields is an array of FormFieldBlock
+        const questionAndAnswers: QuestionAndAnswerDto[] = Object.entries(data).map(
+          ([name, value]) => {
+            // @ts-expect-error - TypeScript doesn't know that fields is an array of FormFieldBlock
+            const questionLabel = formFromProps.fields.find((field) => field?.name === name)?.label
+            return {
+              question: questionLabel,
+              answer: value,
+            }
           },
-        },
-        meta: {
-          title: post.title,
-          description: post.description,
-        },
-        publishedAt: new Date().toISOString(),
-        authors: [user],
-      }
+        )
 
-      const createdPostEntity = await createPostMutation.mutateAsync(createPostData)
-      console.log('Created post entity:', createdPostEntity)
+        // This is implicitly added to the question and answer list
+        questionAndAnswers.push({
+          question: 'What is your name?',
+          answer: user?.name || 'Anonymous',
+        })
+
+        const dataToSend: GeneratePostDto = {
+          qa_list: questionAndAnswers,
+          // @ts-expect-error - TypeScript doesn't know prompt exists on formFromProps
+          prompt: formFromProps.prompt,
+        }
+
+        const post = await generatePostMutation.mutateAsync(dataToSend)
+
+        const createPostData: CreatePostDto = {
+          title: post.title,
+          content: {
+            root: {
+              children: [
+                {
+                  children: [
+                    {
+                      detail: 0,
+                      format: 0,
+                      mode: 'normal',
+                      style: '',
+                      text: post.content,
+                      type: 'text',
+                      version: 1,
+                    },
+                  ],
+                  direction: 'ltr',
+                  format: '',
+                  indent: 0,
+                  type: 'paragraph',
+                  version: 1,
+                  textFormat: 0,
+                  textStyle: '',
+                },
+              ],
+              direction: 'ltr',
+              format: '',
+              indent: 0,
+              type: 'root',
+              version: 1,
+            },
+          },
+          meta: {
+            title: post.title,
+            description: post.description,
+          },
+          publishedAt: new Date().toISOString(),
+          _status: 'published',
+          authors: [user],
+        }
+
+        await createPostMutation.mutateAsync(createPostData)
+
+        setHasSubmitted(true)
+        setIsLoading(false)
+
+        if (confirmationType === 'redirect' && redirect?.url) {
+          router.push(redirect.url)
+        }
+      } catch (error) {
+        console.error(error)
+        // @ts-expect-error - TypeScript doesn't know error is an object
+        setError({ message: error?.message || 'Something went wrong.' })
+        setIsLoading(false)
+      }
     },
     [
+      confirmationType,
       createPostMutation,
       formFromProps.fields,
       // @ts-expect-error - TypeScript doesn't know prompt exists on formFromProps
       formFromProps.prompt,
       generatePostMutation,
+      redirect?.url,
+      router,
       user,
     ],
   )

@@ -78,7 +78,9 @@ export const UserNav: React.FC<{ user: User }> = ({ user }) => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="cursor-pointer">Profile</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/profile')} className="cursor-pointer">
+            Profile
+          </DropdownMenuItem>
           <DropdownMenuItem className="cursor-pointer">Settings</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
