@@ -80,8 +80,9 @@ export const plugins: Plugin[] = [
               }),
             }
           }
+
           // Adds a description field to each block in the form builder
-          else if ('name' in field && field.name === 'fields') {
+          if ('name' in field && field.name === 'fields') {
             return {
               ...field,
               blocks:
@@ -97,12 +98,46 @@ export const plugins: Plugin[] = [
                           name: `${block.slug}Description`,
                           type: 'text',
                           label: 'Description',
+                          admin: {
+                            description: `This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.`,
+                          },
                         },
                       ],
                     },
                     block.fields[block.fields.length - 1], // Insert the required field back in
                   ],
                 })),
+            }
+          }
+
+          // Add custom descriptions
+          if ('name' in field && field.name === 'title') {
+            return {
+              ...field,
+              admin: {
+                description:
+                  'This is the title of the form that will be displayed to users. It is recommended to keep it short and descriptive.',
+              },
+            }
+          }
+
+          if ('name' in field && field.name === 'submitButtonLabel') {
+            return {
+              ...field,
+              admin: {
+                description:
+                  'This is the label for the submit button. It should be clear and concise, indicating the action that will be taken when clicked.',
+              },
+            }
+          }
+
+          if ('name' in field && field.name === 'confirmationType') {
+            return {
+              ...field,
+              admin: {
+                description:
+                  'This determines how the user will be notified after submitting the form. You can choose between a custom message or a redirect to another page.',
+              },
             }
           }
 
@@ -113,11 +148,13 @@ export const plugins: Plugin[] = [
           ...originalFields.slice(0, 1),
           {
             name: 'prompt',
-            label:
-              'Prompt (Please provide details on how to generate the article based on the form submission)',
+            label: 'Prompt',
             type: 'textarea',
-            defaultValue: 'Please write a detailed article about your interview experience.',
             required: true,
+            admin: {
+              description:
+                'Please provide details on how to generate the article based on the form submission.',
+            },
           },
           ...originalFields.slice(1, originalFields.length),
         ]
