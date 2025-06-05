@@ -560,7 +560,13 @@ export interface FormBlock {
  */
 export interface Form {
   id: number;
+  /**
+   * This is the title of the form that will be displayed to users. It is recommended to keep it short and descriptive.
+   */
   title: string;
+  /**
+   * Please provide details on how to generate the article based on the form submission.
+   */
   prompt: string;
   keys: string;
   tags: string;
@@ -571,6 +577,9 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             required?: boolean | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             checkboxDescription?: string | null;
             defaultValue?: boolean | null;
             id?: string | null;
@@ -581,6 +590,9 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             countryDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -591,6 +603,9 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             emailDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -598,6 +613,9 @@ export interface Form {
             blockType: 'email';
           }
         | {
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             messageDescription?: string | null;
             message?: {
               root: {
@@ -623,6 +641,9 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             defaultValue?: number | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             numberDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -642,6 +663,9 @@ export interface Form {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             selectDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -652,6 +676,9 @@ export interface Form {
             name: string;
             label?: string | null;
             width?: number | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             stateDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -663,6 +690,9 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             defaultValue?: string | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             textDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -674,6 +704,9 @@ export interface Form {
             label?: string | null;
             width?: number | null;
             defaultValue?: string | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             textareaDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -686,6 +719,9 @@ export interface Form {
             width?: number | null;
             defaultValue?: string | null;
             placeholder?: string | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             datePickerDescription?: string | null;
             required?: boolean | null;
             range?: boolean | null;
@@ -704,6 +740,9 @@ export interface Form {
                   id?: string | null;
                 }[]
               | null;
+            /**
+             * This is a description for the filling or using the field. It can be used to provide additional context or instructions for users filling out the form.
+             */
             draggableListDescription?: string | null;
             required?: boolean | null;
             id?: string | null;
@@ -712,9 +751,12 @@ export interface Form {
           }
       )[]
     | null;
+  /**
+   * This is the label for the submit button. It should be clear and concise, indicating the action that will be taken when clicked.
+   */
   submitButtonLabel?: string | null;
   /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
+   * This determines how the user will be notified after submitting the form. You can choose between a custom message or a redirect to another page.
    */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {

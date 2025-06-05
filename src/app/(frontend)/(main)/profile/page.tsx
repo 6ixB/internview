@@ -7,15 +7,20 @@ import {
   FootprintsIcon,
   GraduationCapIcon,
   MailIcon,
+  SettingsIcon,
   UniversityIcon,
 } from 'lucide-react'
 import { CareerJourney } from '@/components/CareerJourney'
+import { Button } from '@/components/ui/button'
 
 export default async function Page() {
   return (
-    <main className="w-full flex justify-center my-6">
+    <main className="w-full flex justify-center my-6 overflow-scroll">
       <div className="container grid grid-cols-6 grid-rows-2 gap-6">
-        <div className="col-span-2 p-6 grid grid-rows-3 border rounded-lg gap-10">
+        <div className="h-fit col-span-2 p-6 grid grid-rows-2 border rounded-lg gap-10 relative">
+          <Button className="size-10 absolute top-2 right-2" variant="ghost">
+            <SettingsIcon className="size-4" />
+          </Button>
           <div className="flex flex-col items-center justify-center gap-2">
             <Avatar className="size-20">
               <AvatarImage src="https://github.com/shadcn.png" />
@@ -46,7 +51,7 @@ export default async function Page() {
             </div>
           </div>
         </div>
-        <div className="col-span-4 p-6 border rounded-lg">
+        <div className="h-fit col-span-4 px-6 pt-6 pb-1 border rounded-lg">
           <div className="flex items-center gap-2">
             <FootprintsIcon className="size-4" />
             <h1 className="font-semibold">My Journey</h1>
@@ -56,13 +61,13 @@ export default async function Page() {
             career paths are tailored to your profile and can help you achieve your goals. You can
             explore these paths and find the best fit for you.
           </p>
+          <CareerJourney />
         </div>
-        <div className="col-span-6 p-6 border rounded-lg">
+        <div className="col-span-6 p-6">
           <div className="flex items-center gap-2">
             <ActivityIcon className="size-4" />
             <h1 className="font-semibold">Latest Activity</h1>
           </div>
-          <CareerJourney />
         </div>
       </div>
     </main>
