@@ -50,22 +50,25 @@ export const DraggableList: React.FC<
     }),
   )
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
+  // function handleDragEnd(event: DragEndEvent) {
+  //   const { active, over } = event
 
-    if (!active || !over) {
-      return
-    }
+  //   if (!active || !over) {
+  //     return
+  //   }
 
-    if (active.id !== over.id) {
-      setItems((items) => {
-        const oldIndex = items.findIndex((item) => item.value === active.id)
-        const newIndex = items.findIndex((item) => item.value === over.id)
+  //   if (active.id !== over.id) {
+  
+  //       const oldIndex = items.findIndex((item) => item.value === active.id)
+  //       const newIndex = items.findIndex((item) => item.value === over.id)
 
-        return arrayMove(items, oldIndex, newIndex)
-      })
-    }
-  }
+  //       const newItems = arrayMove(items, oldIndex, newIndex)
+  //       setItems(newItems)
+
+  //       const newOrder = newItems.map((item: { value: any })=>item.value)
+  //       field.onChange(newOrder)
+  //   }
+  // }
 
   return (
     <Width width={width}>
@@ -82,9 +85,26 @@ export const DraggableList: React.FC<
         <FormControl>
           <Controller
             control={control}
-            defaultValue=""
+            defaultValue={itemValues}
             name={name}
-            render={() => {
+            rules={{ required }}
+            render={({ field } : { field: { value: string[]; onChange: (val: string[]) => void } }) => {
+
+              const handleDragEnd = (event: DragEndEvent) => {
+                const { active, over } = event
+                if (!active || !over || active.id === over.id) return
+
+                const oldIndex = items.findIndex((item) => item.value === active.id)
+                const newIndex = items.findIndex((item) => item.value === over.id)
+
+                const newItems = arrayMove(items, oldIndex, newIndex)
+                setItems(newItems)
+
+                // Send updated order to form field
+                const newOrder = newItems.map((item: { value: any }) => item.value)
+                field.onChange(newOrder)
+              }
+
               return (
                 <DndContext
                   sensors={sensors}
@@ -104,7 +124,6 @@ export const DraggableList: React.FC<
                 </DndContext>
               )
             }}
-            rules={{ required }}
           />
         </FormControl>
         {errors[name] && <Error />}

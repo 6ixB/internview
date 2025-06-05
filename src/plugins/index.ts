@@ -119,6 +119,22 @@ export const plugins: Plugin[] = [
             defaultValue: 'Please write a detailed article about your interview experience.',
             required: true,
           },
+          {
+            name: 'keys',
+            label:
+              'Please provide the return keys of the form, separated by comma(s)',
+            type: 'textarea',
+            defaultValue: 'title, article, tags',
+            required: true,
+          },
+          {
+            name: 'tags',
+            label:
+              'Please provide the tag pool of the generated article, separated by comma(s)',
+            type: 'textarea',
+            defaultValue: 'health, finance, technology',
+            required: true,
+          },
           ...originalFields.slice(1, originalFields.length),
         ]
       },

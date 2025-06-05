@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
 
 import { fields } from './fields'
+import DraggableList from '@/components/form/DraggableListWrapper';
 import { getClientSideURL } from '@/utilities/getURL'
 import { z } from 'zod'
 import { useMutation } from '@tanstack/react-query'
@@ -33,6 +34,8 @@ const questionAndAnswerDtoSchema = z.object({
 const generatePostDtoSchema = z.object({
   qa_list: z.array(questionAndAnswerDtoSchema),
   prompt: z.string(),
+  keys: z.string(),
+  tags: z.string(),
 })
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -166,10 +169,14 @@ export const FormBlock: React.FC<
         },
         body: JSON.stringify(dataToSend),
       })
+      
+      
 
       if (!response.ok) throw new Error('Failed to generate post')
 
       const data = await response.json()
+      console.log(data);
+      
       return data
     },
   })
@@ -196,15 +203,25 @@ export const FormBlock: React.FC<
     async (data: FormFieldBlock[]) => {
       try {
         setIsLoading(true)
+        
+        // console.log(data);
+        
 
         // @ts-expect-error - This is valid, but TypeScript doesn't know that fields is an array of FormFieldBlock
         const questionAndAnswers: QuestionAndAnswerDto[] = Object.entries(data).map(
           ([name, value]) => {
             // @ts-expect-error - TypeScript doesn't know that fields is an array of FormFieldBlock
             const questionLabel = formFromProps.fields.find((field) => field?.name === name)?.label
+            // console.log(value);
+            // console.log(questionLabel);
+            let formattedValue = Array.isArray(value) ? value.join(', ') : value
+
+            if (typeof formattedValue === 'string') {
+              formattedValue = formattedValue.replace(/'/g, '').replace(/-/g, ' ')
+            }
             return {
               question: questionLabel,
-              answer: value,
+              answer: formattedValue,
             }
           },
         )
@@ -219,7 +236,11 @@ export const FormBlock: React.FC<
           qa_list: questionAndAnswers,
           // @ts-expect-error - TypeScript doesn't know prompt exists on formFromProps
           prompt: formFromProps.prompt,
+          keys: formFromProps.keys,
+          tags: formFromProps.tags,
         }
+        console.log(dataToSend);
+        
 
         const post = await generatePostMutation.mutateAsync(dataToSend)
 
